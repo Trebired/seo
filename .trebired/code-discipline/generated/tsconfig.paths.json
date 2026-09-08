@@ -10,6 +10,9 @@
       "#9nyt9bc0kbgh": [
         "../../../scripts/verify/seo.mjs"
       ],
+      "#aecbxtt8v5ky": [
+        "../../../src/package-metadata.ts"
+      ],
       "#e820ss91fsrh": [
         "../../../src/route.ts"
       ],

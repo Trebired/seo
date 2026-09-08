@@ -15,7 +15,7 @@ function check(name, condition, detail = "") {
 
 const config = seo.defineConfig({
     defaults: { description: "Fallback description", image: { url: "/card.png" } },
-    forVersion: "0.1.0",
+    forVersion: "0.2.0",
     localeStrategy: "prefix",
     site: {
       defaultLocale: "en",
@@ -70,7 +70,7 @@ const noindex = seo.buildRouteSeo(config, {
 check("robots noindex honoured", metaValue(noindex, "robots") === "noindex,nofollow");
 
 const singleLocale = seo.defineConfig({
-    forVersion: "0.1.0",
+    forVersion: "0.2.0",
     site: { defaultLocale: "en", name: "Solo", url: "https://solo.test" },
 });
 const soloRoute = seo.buildRouteSeo(singleLocale, { path: "/x", title: "X" });
@@ -122,6 +122,44 @@ check("canonical Link header built", headers.Link.includes("rel=\"canonical\""))
 const redirect = seo.canonicalRedirect(config, "https://example.com/about/");
 check("trailing slash redirects", redirect?.location === "https://example.com/about", String(redirect?.location));
 check("canonical url does not redirect", seo.canonicalRedirect(config, "https://example.com/about") === null);
+
+const shellChrome = seo.mergeShellMeta(shell, {
+    links: [{ href: "/favicon.ico", rel: "icon" }],
+    metas: [{ content: "#ffffff", name: "theme-color" }],
+});
+check("merged chrome keeps seo links", shellChrome.links.length === shell.links.length + 1);
+check("merged chrome appends metas", shellChrome.metas.length === shell.metas.length + 1);
+check("merged chrome keeps title", shellChrome.title === shell.title);
+
+function throws(fn) {
+  try {
+    fn();
+    return "";
+  } catch (error) {
+    return String(error);
+  }
+}
+
+const stale = throws(() => seo.normalizeConfig({ ...config, forVersion: "0.1.0" }));
+check("stale forVersion rejected", stale.includes("targets 0.1.0"), stale);
+
+const missing = throws(() => seo.normalizeConfig({ ...config, forVersion: "" }));
+check("missing forVersion rejected", missing.includes("missing forVersion"), missing);
+
+const named = throws(() =>
+  seo.normalizeConfig({ ...config, forVersion: "" }, { configPath: ".trebired/seo/config.ts" }));
+check("configPath named in error", named.includes(".trebired/seo/config.ts"), named);
+
+const relaxed = throws(() =>
+  seo.normalizeConfig({ ...config, forVersion: "" }, { requireForVersion: false }));
+check("requireForVersion false allows empty", relaxed === "", relaxed);
+
+const outOfOrder = seo.normalizeConfig({
+    defaults: { description: "d" },
+    forVersion: "0.2.0",
+    site: { defaultLocale: "en", name: "Order", url: "https://order.test" },
+});
+check("forVersion position does not matter", outOfOrder.forVersion === "0.2.0");
 
 if (failures.length) {
   for (const failure of failures) console.error(`FAIL ${failure}`);

@@ -84,6 +84,11 @@ type NormalizedSeoConfig = {
   twitter: SeoTwitter;
 };
 
+type NormalizeSeoConfigOptions = {
+  configPath?: string;
+  requireForVersion?: boolean;
+};
+
 type SeoRouteInput = {
   description?: string;
   image?: SeoImage;
@@ -136,6 +141,7 @@ type SeoSitemapEntry = SeoSitemapEntryConfig& {
 
 export type {
   NormalizedSeoConfig,
+  NormalizeSeoConfigOptions,
   SeoChangeFrequency,
   SeoConfig,
   SeoDefaults,

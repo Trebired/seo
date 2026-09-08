@@ -6,6 +6,9 @@ import { fileURLToPath } from "node:url";
 const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
 const tempRoot = path.join(rootDir, ".tmp", "verify-pack");
 const consumerDir = path.join(tempRoot, "consumer");
+const packageVersion = JSON.parse(
+  await fs.readFile(path.join(rootDir, "package.json"), "utf8"),
+).version;
 
 async function main() {
   await fs.rm(tempRoot, { force: true, recursive: true });
@@ -68,7 +71,7 @@ async function runConsumerSmokeTest(tarball) {
     [
       'import { buildRouteSeo, buildSitemap, defineConfig } from "@trebired/seo";',
       "const config = defineConfig({",
-      '  forVersion: "0.1.0",',
+      `  forVersion: "${packageVersion}",`,
       '  site: { defaultLocale: "en", name: "Consumer", url: "https://consumer.test" },',
       "});",
       'const seo = buildRouteSeo(config, { path: "/", title: "Home" });',

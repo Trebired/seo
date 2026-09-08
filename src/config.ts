@@ -1,7 +1,13 @@
-import { toTrimmedString as toString } from "@trebired/utils";
+import { resolveForVersion, toTrimmedString as toString } from "@trebired/utils";
 
+import { PACKAGE_VERSION } from "./package-metadata.js";
 import { normalizeOrigin } from "./url.js";
-import type { NormalizedSeoConfig, SeoConfig, SeoRobots } from "./types.js";
+import type {
+  NormalizedSeoConfig,
+  NormalizeSeoConfigOptions,
+  SeoConfig,
+  SeoRobots,
+} from "./types.js";
 
 const DEFAULT_ROBOTS: SeoRobots = { follow: true, index: true };
 const DEFAULT_TITLE_TEMPLATE = "%s";
@@ -26,7 +32,21 @@ function normalizeLocales(config: SeoConfig): string[] {
   return declared.includes(fallback) ? declared : [fallback, ...declared];
 }
 
-function normalizeConfig(config: SeoConfig): NormalizedSeoConfig {
+function resolveConfigVersion(config: SeoConfig, options: NormalizeSeoConfigOptions): string {
+  return resolveForVersion({
+      configPath: options.configPath,
+      forVersion: config.forVersion,
+      label: "seo",
+      packageVersion: PACKAGE_VERSION,
+      requireForVersion: options.requireForVersion,
+  });
+}
+
+function normalizeConfig(
+  config: SeoConfig,
+  options: NormalizeSeoConfigOptions = {},
+): NormalizedSeoConfig {
+  const forVersion = resolveConfigVersion(config, options);
   assertSite(config);
 
   return {
@@ -35,7 +55,7 @@ function normalizeConfig(config: SeoConfig): NormalizedSeoConfig {
       robots: { ...DEFAULT_ROBOTS, ...config.defaults?.robots },
       type: toString(config.defaults?.type) || DEFAULT_TYPE,
     },
-    forVersion: toString(config.forVersion),
+    forVersion,
     localeStrategy: config.localeStrategy || "none",
     robotsTxt: { host: true, sitemap: true, ...config.robotsTxt },
     site: {

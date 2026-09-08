@@ -18,7 +18,7 @@ bun i @trebired/seo
 import { buildRouteSeo, defineConfig, toShellMeta } from "@trebired/seo";
 
 const config = defineConfig({
-  forVersion: "0.1.0",
+  forVersion: "0.2.0",
   site: {
     defaultLocale: "en",
     locales: ["en", "cs"],
@@ -98,7 +98,7 @@ export default defineConfig({
     image: { alt: "Example", height: 630, url: "/social-card.png", width: 1200 },
     robots: { index: true, follow: true },
   },
-  forVersion: "0.1.0",
+  forVersion: "0.2.0",
   localeStrategy: "none",
   robotsTxt: { disallow: ["/api/"] },
   site: {
@@ -114,6 +114,8 @@ export default defineConfig({
 ```
 
 `site.name`, `site.url`, and `site.defaultLocale` are required. `normalizeConfig()` throws when one is missing, at build time rather than in a crawler's index.
+
+`forVersion` is required and is checked against the installed package version through `resolveForVersion()` from `@trebired/utils`. A config written for an older minor line fails the build rather than applying stale defaults. Its position among the config keys does not matter; the check is a property lookup, not an ordering rule. Pass `configPath` to `normalizeConfig()` to name the file in the failure message, and `requireForVersion: false` to allow an absent value.
 
 Per-route values override config defaults. A route passes `title`, `description`, `image`, `robots`, `type`, and `structuredData`; anything it omits falls back to `defaults`.
 
@@ -135,7 +137,7 @@ Per-route values override config defaults. A route passes `title`, `description`
 
 Config: `defineConfig`, `normalizeConfig`, `DEFAULT_ROBOTS`.
 
-Routes: `buildRouteSeo`, `renderTitle`, `toShellMeta`.
+Routes: `buildRouteSeo`, `renderTitle`, `toShellMeta`, `mergeShellMeta`.
 
 Robots: `robotsContent`, `robotsDirectives`, `robotsHeader`, `buildRobotsTxt`.
 

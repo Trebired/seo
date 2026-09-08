@@ -1,4 +1,10 @@
-import type { SeoDescriptor, SeoShellMeta, SeoStructuredData } from "./types.js";
+import type {
+  SeoDescriptor,
+  SeoLink,
+  SeoMeta,
+  SeoShellMeta,
+  SeoStructuredData,
+} from "./types.js";
 
 const SCRIPT_CLOSE = /<\/(script)/giu;
 
@@ -28,4 +34,24 @@ function toShellMeta(descriptor: SeoDescriptor): SeoShellMeta {
   };
 }
 
-export { escapeJsonLd, renderStructuredData, serializeStructuredData, toShellMeta };
+function mergeShellMeta<Link, Meta>(
+  shell: SeoShellMeta,
+  chrome: { links?: readonly Link[]; metas?: readonly Meta[] } = {},
+): Omit<SeoShellMeta, "links"|"metas">& {
+  links: (SeoLink | Link)[];
+  metas: (SeoMeta | Meta)[];
+} {
+  return {
+    ...shell,
+    links: [...shell.links, ...(chrome.links || [])],
+    metas: [...shell.metas, ...(chrome.metas || [])],
+  };
+}
+
+export {
+  escapeJsonLd,
+  mergeShellMeta,
+  renderStructuredData,
+  serializeStructuredData,
+  toShellMeta,
+};

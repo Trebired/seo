@@ -4,6 +4,12 @@ All notable changes to `@trebired/seo` will be documented here.
 
 This project follows semantic versioning once published.
 
+## 0.2.0
+
+- Added `forVersion` validation. `normalizeConfig()` now runs `resolveForVersion()` from `@trebired/utils`, so a config targeting a different minor line fails at build time instead of silently applying stale defaults. A config missing `forVersion` is rejected unless `requireForVersion: false` is passed.
+- Added a `NormalizeSeoConfigOptions` argument to `normalizeConfig()` carrying `configPath` and `requireForVersion`. Passing `configPath` names the offending file in the failure message.
+- Added `mergeShellMeta()`, which appends application-owned chrome links and metas to a shell meta object without widening what the package itself claims to own.
+
 ## 0.1.0
 
 - Added `buildRouteSeo()`, which turns one config plus per-route copy into a `SeoDescriptor` carrying title, description, canonical, robots, Open Graph, Twitter card, and `hreflang` data.

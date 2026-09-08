@@ -5,6 +5,7 @@ export { buildSitemap, escapeXml } from "./sitemap.js";
 export { canonicalRedirect, noindexHeaders, seoHeaders } from "./server.js";
 export {
   escapeJsonLd,
+  mergeShellMeta,
   renderStructuredData,
   serializeStructuredData,
   toShellMeta,
@@ -26,6 +27,7 @@ export type {
 } from "./jsonld.js";
 export type {
   NormalizedSeoConfig,
+  NormalizeSeoConfigOptions,
   SeoChangeFrequency,
   SeoConfig,
   SeoDefaults,
