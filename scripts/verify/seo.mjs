@@ -5,6 +5,9 @@ const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..",
 const distEntry = path.join(rootDir, "dist", "index.js");
 
 const seo = await import(distEntry);
+const { version } = JSON.parse(
+  await (await import("node:fs/promises")).readFile(path.join(rootDir, "package.json"), "utf8"),
+);
 
 const failures = [];
 
@@ -15,7 +18,7 @@ function check(name, condition, detail = "") {
 
 const config = seo.defineConfig({
     defaults: { description: "Fallback description", image: { url: "/card.png" } },
-    forVersion: "0.2.0",
+    forVersion: version,
     localeStrategy: "prefix",
     site: {
       defaultLocale: "en",
@@ -70,7 +73,7 @@ const noindex = seo.buildRouteSeo(config, {
 check("robots noindex honoured", metaValue(noindex, "robots") === "noindex,nofollow");
 
 const singleLocale = seo.defineConfig({
-    forVersion: "0.2.0",
+    forVersion: version,
     site: { defaultLocale: "en", name: "Solo", url: "https://solo.test" },
 });
 const soloRoute = seo.buildRouteSeo(singleLocale, { path: "/x", title: "X" });
@@ -156,10 +159,34 @@ check("requireForVersion false allows empty", relaxed === "", relaxed);
 
 const outOfOrder = seo.normalizeConfig({
     defaults: { description: "d" },
-    forVersion: "0.2.0",
+    forVersion: version,
     site: { defaultLocale: "en", name: "Order", url: "https://order.test" },
 });
-check("forVersion position does not matter", outOfOrder.forVersion === "0.2.0");
+check("forVersion position does not matter", outOfOrder.forVersion === version);
+
+const builder = seo.createSeoBuilder(config, {
+    chrome: {
+      links: [{ href: "/favicon.ico", rel: "icon" }],
+      metas: [{ content: "#ffffff", name: "theme-color" }],
+    },
+    configPath: ".trebired/seo/config.ts",
+});
+const built = builder.shellMeta({ locale: "en", path: "/", title: "Home" });
+check("builder shellMeta titles", built.title === "Home | Example", built.title);
+check("builder shellMeta merges chrome links", built.links.some((l) => l.href === "/favicon.ico"));
+check("builder shellMeta merges chrome metas", built.metas.some((m) => m.name === "theme-color"));
+check("builder exposes normalized config", builder.config.site.name === "Example");
+check("builder robotsTxt", builder.robotsTxt().startsWith("User-agent: *"));
+check("builder sitemap", builder.sitemap([{ path: "/" }]).includes("<urlset"));
+check(
+  "builder structuredData",
+  builder.structuredData([seo.webSiteSchema({ name: "E", url: "https://example.com" })])
+  .startsWith("<script"),
+);
+check("builder descriptor canonical", builder.descriptor({ path: "/" }).canonical === "https://example.com/");
+
+const badBuilder = throws(() => seo.createSeoBuilder({ ...config, forVersion: "0.1.0" }));
+check("builder validates forVersion once", badBuilder.includes("targets 0.1.0"), badBuilder);
 
 if (failures.length) {
   for (const failure of failures) console.error(`FAIL ${failure}`);

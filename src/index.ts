@@ -1,3 +1,4 @@
+export { createSeoBuilder } from "./builder.js";
 export { DEFAULT_ROBOTS, defineConfig, normalizeConfig } from "./config.js";
 export { buildRouteSeo, renderTitle } from "./route.js";
 export { buildRobotsTxt, robotsContent, robotsDirectives, robotsHeader } from "./robots.js";
@@ -19,6 +20,7 @@ export {
 } from "./jsonld.js";
 export { absoluteUrl, localizedPath, localizedUrl, normalizeOrigin, normalizePath } from "./url.js";
 export type { CanonicalRedirect } from "./server.js";
+export type { SeoBuilder, SeoBuilderOptions, SeoChrome } from "./builder.js";
 export type {
   BreadcrumbItem,
   OrganizationInput,

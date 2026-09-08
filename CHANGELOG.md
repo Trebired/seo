@@ -4,6 +4,11 @@ All notable changes to `@trebired/seo` will be documented here.
 
 This project follows semantic versioning once published.
 
+## 0.3.0
+
+- Added `createSeoBuilder()`, which binds one config plus the application's chrome links and metas once and returns `shellMeta()`, `descriptor()`, `robotsTxt()`, `sitemap()`, and `structuredData()`. Both consuming sites had written those four wrappers by hand around the same calls. `forVersion` is validated once when the builder is created rather than on every route.
+- Changed the executable verification to read the package version instead of pinning it, so a release bump cannot leave a stale expectation behind.
+
 ## 0.2.0
 
 - Added `forVersion` validation. `normalizeConfig()` now runs `resolveForVersion()` from `@trebired/utils`, so a config targeting a different minor line fails at build time instead of silently applying stale defaults. A config missing `forVersion` is rejected unless `requireForVersion: false` is passed.

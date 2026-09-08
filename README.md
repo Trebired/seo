@@ -137,6 +137,8 @@ Per-route values override config defaults. A route passes `title`, `description`
 
 Config: `defineConfig`, `normalizeConfig`, `DEFAULT_ROBOTS`.
 
+Builder: `createSeoBuilder`.
+
 Routes: `buildRouteSeo`, `renderTitle`, `toShellMeta`, `mergeShellMeta`.
 
 Robots: `robotsContent`, `robotsDirectives`, `robotsHeader`, `buildRobotsTxt`.

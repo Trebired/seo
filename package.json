@@ -8,7 +8,7 @@
     }
   },
   "name": "@trebired/seo",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Search and social metadata for Trebired sites: titles, canonicals, hreflang, Open Graph, Twitter cards, JSON-LD, robots directives, robots.txt, and sitemap.xml, wired through .trebired/seo/config.ts.",
   "type": "module",
   "private": false,

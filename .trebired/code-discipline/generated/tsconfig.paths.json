@@ -22,6 +22,9 @@
       "#fu24r6z0g1u5": [
         "../../../scripts/prepare-dist.mjs"
       ],
+      "#j24o6x4bn43z": [
+        "../../../src/builder.ts"
+      ],
       "#la2lbh02xdx2": [
         "../../../src/jsonld.ts"
       ],

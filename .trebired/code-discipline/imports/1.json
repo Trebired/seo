@@ -6,6 +6,7 @@
   "#e820ss91fsrh": "./src/route.ts",
   "#flh759dotnlr": "./src/config.ts",
   "#fu24r6z0g1u5": "./scripts/prepare-dist.mjs",
+  "#j24o6x4bn43z": "./src/builder.ts",
   "#la2lbh02xdx2": "./src/jsonld.ts",
   "#nqdn2gtbqdpd": "./scripts/verify/pack.mjs",
   "#nw3x39htnybi": "./src/server.ts",
