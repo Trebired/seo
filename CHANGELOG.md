@@ -4,6 +4,12 @@ All notable changes to `@trebired/seo` will be documented here.
 
 This project follows semantic versioning once published.
 
+## 0.4.0
+
+- Changed the `forVersion` check to pass the config object to `resolveForVersion()`, which `@trebired/utils` 0.9.0 requires. A config that does not declare `forVersion` as its first key now fails instead of loading.
+- Updated the `@trebired/utils` dependency range to `^0.9.0`.
+- Updated the shipped `.trebired/logger/config.ts` `forVersion` to `2.7.0` and the `@trebired/code-discipline` / `@trebired/configs` ranges to `^7.2.0` / `^0.4.0`. The logger config named an older release, so under `@trebired/logger` 2.7 the version check threw and this package's log prefix was dropped.
+
 ## 0.3.0
 
 - Added `createSeoBuilder()`, which binds one config plus the application's chrome links and metas once and returns `shellMeta()`, `descriptor()`, `robotsTxt()`, `sitemap()`, and `structuredData()`. Both consuming sites had written those four wrappers by hand around the same calls. `forVersion` is validated once when the builder is created rather than on every route.

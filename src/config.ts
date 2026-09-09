@@ -34,6 +34,7 @@ function normalizeLocales(config: SeoConfig): string[] {
 
 function resolveConfigVersion(config: SeoConfig, options: NormalizeSeoConfigOptions): string {
   return resolveForVersion({
+      config,
       configPath: options.configPath,
       forVersion: config.forVersion,
       label: "seo",

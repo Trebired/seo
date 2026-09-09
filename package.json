@@ -8,7 +8,7 @@
     }
   },
   "name": "@trebired/seo",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Search and social metadata for Trebired sites: titles, canonicals, hreflang, Open Graph, Twitter cards, JSON-LD, robots directives, robots.txt, and sitemap.xml, wired through .trebired/seo/config.ts.",
   "type": "module",
   "private": false,
@@ -42,11 +42,11 @@
     "verify:seo": "bun ./scripts/verify/seo.mjs"
   },
   "dependencies": {
-    "@trebired/utils": "^0.8.0"
+    "@trebired/utils": "^0.9.4"
   },
   "devDependencies": {
-    "@trebired/code-discipline": "^7.1.3",
-    "@trebired/configs": "^0.3.1",
+    "@trebired/code-discipline": "^7.2.0",
+    "@trebired/configs": "^0.4.0",
     "@types/bun": "^1.3.14",
     "@types/node": "^24.13.3",
     "typescript": "^6.0.3"

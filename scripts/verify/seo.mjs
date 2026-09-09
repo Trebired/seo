@@ -17,8 +17,8 @@ function check(name, condition, detail = "") {
 }
 
 const config = seo.defineConfig({
-    defaults: { description: "Fallback description", image: { url: "/card.png" } },
     forVersion: version,
+    defaults: { description: "Fallback description", image: { url: "/card.png" } },
     localeStrategy: "prefix",
     site: {
       defaultLocale: "en",
@@ -157,12 +157,13 @@ const relaxed = throws(() =>
   seo.normalizeConfig({ ...config, forVersion: "" }, { requireForVersion: false }));
 check("requireForVersion false allows empty", relaxed === "", relaxed);
 
-const outOfOrder = seo.normalizeConfig({
-    defaults: { description: "d" },
-    forVersion: version,
-    site: { defaultLocale: "en", name: "Order", url: "https://order.test" },
-});
-check("forVersion position does not matter", outOfOrder.forVersion === version);
+const outOfOrder = throws(() =>
+  seo.normalizeConfig({
+      defaults: { description: "d" },
+      forVersion: version,
+      site: { defaultLocale: "en", name: "Order", url: "https://order.test" },
+  }, { configPath: ".trebired/seo/config.ts" }));
+check("forVersion must come first", outOfOrder.includes("must declare forVersion first"), outOfOrder);
 
 const builder = seo.createSeoBuilder(config, {
     chrome: {
