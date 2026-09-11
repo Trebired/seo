@@ -1,5 +1,8 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { resolveLogger } from "@package/logger-adapter";
+
+const log = resolveLogger({ source: "@trebired/seo" });
 
 const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
 const distEntry = path.join(rootDir, "dist", "index.js");
@@ -162,7 +165,7 @@ const outOfOrder = throws(() =>
       defaults: { description: "d" },
       forVersion: version,
       site: { defaultLocale: "en", name: "Order", url: "https://order.test" },
-  }, { configPath: ".trebired/seo/config.ts" }));
+    }, { configPath: ".trebired/seo/config.ts" }));
 check("forVersion must come first", outOfOrder.includes("must declare forVersion first"), outOfOrder);
 
 const builder = seo.createSeoBuilder(config, {
@@ -190,9 +193,9 @@ const badBuilder = throws(() => seo.createSeoBuilder({ ...config, forVersion: "0
 check("builder validates forVersion once", badBuilder.includes("targets 0.1.0"), badBuilder);
 
 if (failures.length) {
-  for (const failure of failures) console.error(`FAIL ${failure}`);
-  console.error(`SEO verification failed: ${failures.length} check(s).`);
+  for (const failure of failures) log.error("verify.seo", `FAIL ${failure}`);
+  log.error("verify.seo", `SEO verification failed: ${failures.length} check(s).`);
   process.exit(1);
 }
 
-console.log("SEO verification succeeded.");
+log.info("verify.seo", "SEO verification succeeded.");

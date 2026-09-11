@@ -4,6 +4,11 @@ All notable changes to `@trebired/seo` will be documented here.
 
 This project follows semantic versioning once published.
 
+## 0.4.1
+
+- Changed the verification scripts and examples to print through `@trebired/logger-adapter` instead of `console` and `process.stdout`.
+- Added `@trebired/logger-adapter` as a development dependency for the verification scripts.
+
 ## 0.4.0
 
 - Changed the `forVersion` check to pass the config object to `resolveForVersion()`, which `@trebired/utils` 0.9.0 requires. A config that does not declare `forVersion` as its first key now fails instead of loading.
