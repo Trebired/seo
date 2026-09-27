@@ -15,7 +15,7 @@ type SeoImage = {
   width?: number;
 };
 
-type SeoLocaleStrategy = "none" | "prefix" | "query";
+type SeoLocaleStrategy = "none" | "prefix" | "prefix-all" | "query";
 
 type SeoSite = {
   defaultLocale: string;

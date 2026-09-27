@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.0
+
+- `localeStrategy` takes `prefix-all`, which gives the default locale a prefix of its own. Under `prefix` the default locale keeps the bare path, so a two-language site has one prefixed language and one unprefixed; `prefix-all` makes the canonical URL of every language look the same.
+
 All notable changes to `@trebired/seo` will be documented here.
 
 This project follows semantic versioning once published.
