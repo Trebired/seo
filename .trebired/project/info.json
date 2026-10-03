@@ -1,0 +1,11 @@
+{
+  "schema": 1,
+  "category": "package",
+  "subcategory": "web",
+  "status": "active",
+  "npm": "@trebired/seo",
+  "description": {
+    "en": "Titles, canonicals, hreflang, Open Graph, sitemaps and robots rules for every page.",
+    "cs": "Titulky, kanonické odkazy, hreflang, Open Graph, sitemapy a pravidla pro roboty pro každou stránku."
+  }
+}
