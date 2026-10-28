@@ -26,28 +26,27 @@ function isExcluded(config: NormalizedSeoConfig, path: string): boolean {
   return (config.sitemap.exclude || []).some((rule) => normalizePath(rule) === normalizePath(path));
 }
 
-function alternateNodes(config: NormalizedSeoConfig, path: string): string[] {
-  if (config.localeStrategy === "none" || config.site.locales.length < 2) return [];
-  return config.site.locales.map((locale) => {
-      const href = localizedUrl(
-        config.site.url,
-        path,
-        locale,
-        config.site.defaultLocale,
-        config.localeStrategy,
-      );
-      return `    <xhtml:link rel="alternate" hreflang="${escapeXml(locale)}" href="${escapeXml(href)}"/>`;
-  });
+function localized(config: NormalizedSeoConfig, path: string, locale: string): string {
+  return localizedUrl(config.site.url, path, locale, config.site.defaultLocale, config.localeStrategy);
 }
 
-function entryNode(config: NormalizedSeoConfig, entry: SeoSitemapEntry): string {
-  const loc = localizedUrl(
-    config.site.url,
-    entry.path,
-    config.site.defaultLocale,
-    config.site.defaultLocale,
-    config.localeStrategy,
-  );
+function alternateNode(hreflang: string, href: string): string {
+  return `    <xhtml:link rel="alternate" hreflang="${escapeXml(hreflang)}" href="${escapeXml(href)}"/>`;
+}
+
+function alternateNodes(config: NormalizedSeoConfig, path: string): string[] {
+  if (!isLocalized(config)) return [];
+  const nodes = config.site.locales.map((locale) => alternateNode(locale, localized(config, path, locale)));
+  nodes.push(alternateNode("x-default", localized(config, path, config.site.defaultLocale)));
+  return nodes;
+}
+
+function isLocalized(config: NormalizedSeoConfig): boolean {
+  return config.localeStrategy !== "none" && config.site.locales.length > 1;
+}
+
+function entryNode(config: NormalizedSeoConfig, entry: SeoSitemapEntry, locale: string): string {
+  const loc = localized(config, entry.path, locale);
   const lines = [`    <loc>${escapeXml(loc)}</loc>`, ...alternateNodes(config, entry.path)];
 
   const lastModified = lastModifiedValue(entry.lastModified);
@@ -64,9 +63,10 @@ function entryNode(config: NormalizedSeoConfig, entry: SeoSitemapEntry): string 
 
 function buildSitemap(config: SeoConfig, entries: readonly SeoSitemapEntry[]): string {
   const normalized = normalizeConfig(config);
+  const locales = isLocalized(normalized) ? normalized.site.locales : [normalized.site.defaultLocale];
   const nodes = entries
   .filter((entry) => !isExcluded(normalized, entry.path))
-  .map((entry) => entryNode(normalized, entry));
+  .flatMap((entry) => locales.map((locale) => entryNode(normalized, entry, locale)));
 
   return [
     '<?xml version="1.0" encoding="UTF-8"?>',
