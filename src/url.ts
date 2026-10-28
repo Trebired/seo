@@ -22,8 +22,6 @@ function localizedPath(
 ): string {
   const base = normalizePath(path);
   if (strategy === "none") return base;
-  /* prefix-all gives the default locale a prefix too, so its canonical URL is
-     the prefixed one rather than the bare path. */
   if (locale === defaultLocale && strategy !== "prefix-all") return base;
   if (strategy === "query") return `${base}?lang=${encodeURIComponent(locale)}`;
   return base === "/" ? `/${locale}` : `/${locale}${base}`;
