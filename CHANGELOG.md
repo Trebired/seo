@@ -1,12 +1,18 @@
 # Changelog
 
-## 0.5.0
-
-- `localeStrategy` takes `prefix-all`, which gives the default locale a prefix of its own. Under `prefix` the default locale keeps the bare path, so a two-language site has one prefixed language and one unprefixed; `prefix-all` makes the canonical URL of every language look the same.
-
 All notable changes to `@trebired/seo` will be documented here.
 
 This project follows semantic versioning once published.
+
+## 0.6.0
+
+- Changed the sitemap to list every language of a route as its own `<url>`. It listed only the default locale's URL with the others as alternates, so the translated URLs were never submitted themselves. Each entry now carries the full set of alternates and `x-default`.
+- Added `auditSeo()`. It reads the titles and descriptions a build is about to publish and reports missing ones and ones repeated within a language as errors, and titles outside 25 to 60 characters and descriptions outside 110 to 160 as warnings. Pages marked noindex are skipped.
+- Added `articleSchema()` for articles and blog posts and `faqSchema()` for question and answer pages.
+
+## 0.5.0
+
+- `localeStrategy` takes `prefix-all`, which gives the default locale a prefix of its own. Under `prefix` the default locale keeps the bare path, so a two-language site has one prefixed language and one unprefixed; `prefix-all` makes the canonical URL of every language look the same.
 
 ## 0.4.2
 
