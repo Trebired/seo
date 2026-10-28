@@ -123,13 +123,19 @@ Per-route values override config defaults. A route passes `title`, `description`
 
 ### Static Builds
 
-`buildSitemap()` and `buildRobotsTxt()` return strings. A build writes them next to the generated HTML. `buildSitemap()` emits `xhtml:link` alternates per entry when `localeStrategy` is not `"none"`.
+`buildSitemap()` and `buildRobotsTxt()` return strings. A build writes them next to the generated HTML. When `localeStrategy` is not `"none"`, `buildSitemap()` lists every language of a route as its own `<url>`, and each one carries the full set of `xhtml:link` alternates, `x-default` included, so every localized URL is submitted and every one names its translations.
+
+### Audit
+
+`auditSeo(pages, limits?)` checks what a build is about to publish and returns a list of issues, each with `path`, `lang`, `rule`, `level` and `message`. A page is `{ path, lang, title, description, robots? }`, the rendered title and description as a crawler reads them. A missing title or description, and a title or description that repeats another page in the same language, are errors. A title outside 25 to 60 characters or a description outside 110 to 160 characters is a warning, because a result cuts longer text and shorter text leaves the result to fill itself. `limits` moves those bounds. A page with `robots.index` set to `false` is skipped. The package returns the issues; the build decides whether a warning stops it.
 
 ### Server Responses
 
 `seoHeaders()` returns a `Link: <canonical>; rel="canonical"` header and an `X-Robots-Tag` header for a descriptor. `noindexHeaders()` returns `X-Robots-Tag: noindex,nofollow` for routes that must stay out of an index regardless of their markup. `canonicalRedirect()` compares a request URL against the configured origin and canonical path shape, and returns a 301 target when they differ, or `null` when the URL is already canonical.
 
 ### Structured Data
+
+`articleSchema()` describes a blog post or an article (`type` is `Article`, `BlogPosting` or `NewsArticle`) with its headline, dates, author and publisher, and `faqSchema()` a page of questions and answers. `webSiteSchema()`, `organizationSchema()`, `personSchema()` and `breadcrumbSchema()` cover the site, its owner and a page's place in it.
 
 `renderStructuredData()` returns a complete `<script type="application/ld+json">` element. `serializeStructuredData()` returns the JSON payload alone. Both escape `</script` and `<!--` so page data cannot terminate the script element. `@trebired/bundler`'s static shell renders `<title>`, `<meta>`, and `<link>` only, so a static build places the returned element in the body, which is valid for JSON-LD.
 
@@ -145,13 +151,15 @@ Robots: `robotsContent`, `robotsDirectives`, `robotsHeader`, `buildRobotsTxt`.
 
 Sitemap: `buildSitemap`, `escapeXml`.
 
-Structured data: `webSiteSchema`, `personSchema`, `organizationSchema`, `breadcrumbSchema`, `withContext`, `renderStructuredData`, `serializeStructuredData`, `escapeJsonLd`.
+Audit: `auditSeo`.
+
+Structured data: `articleSchema`, `faqSchema`, `webSiteSchema`, `personSchema`, `organizationSchema`, `breadcrumbSchema`, `withContext`, `renderStructuredData`, `serializeStructuredData`, `escapeJsonLd`.
 
 Server: `seoHeaders`, `noindexHeaders`, `canonicalRedirect`.
 
 URLs: `absoluteUrl`, `localizedUrl`, `localizedPath`, `normalizeOrigin`, `normalizePath`.
 
-Types are exported for every public surface, including `SeoConfig`, `SeoDescriptor`, `SeoRouteInput`, `SeoShellMeta`, `SeoSitemapEntry`, and `SeoStructuredData`.
+Types are exported for every public surface, including `SeoAuditIssue`, `SeoAuditPage`, `SeoConfig`, `SeoDescriptor`, `SeoRouteInput`, `SeoShellMeta`, `SeoSitemapEntry`, and `SeoStructuredData`.
 
 ## What It Does Not Do
 

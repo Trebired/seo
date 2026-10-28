@@ -110,6 +110,8 @@ check("sitemap contains home loc", sitemap.includes("<loc>https://example.com/</
 check("sitemap emits lastmod", sitemap.includes("<lastmod>2026-01-02</lastmod>"));
 check("sitemap emits changefreq", sitemap.includes("<changefreq>weekly</changefreq>"));
 check("sitemap emits hreflang alternates", sitemap.includes('hreflang="cs"'));
+check("sitemap lists every locale URL as its own entry", sitemap.includes("<loc>https://example.com/cs</loc>"));
+check("sitemap alternates carry x-default", sitemap.includes('hreflang="x-default" href="https://example.com/"'));
 
 const excluded = seo.buildSitemap(
   { ...config, sitemap: { exclude: ["/skip"] } },
@@ -191,6 +193,32 @@ check("builder descriptor canonical", builder.descriptor({ path: "/" }).canonica
 
 const badBuilder = throws(() => seo.createSeoBuilder({ ...config, forVersion: "0.1.0" }));
 check("builder validates forVersion once", badBuilder.includes("targets 0.1.0"), badBuilder);
+
+const audit = seo.auditSeo([
+    { description: "A".repeat(130), lang: "en", path: "/", title: "Home page of the example site" },
+    { description: "A".repeat(130), lang: "en", path: "/copy", title: "Home page of the example site" },
+    { description: "", lang: "cs", path: "/", title: "" },
+    { description: "short", lang: "cs", path: "/hidden", robots: { index: false }, title: "x" },
+    { description: "B".repeat(200), lang: "cs", path: "/long", title: "C".repeat(70) },
+]);
+const rules = (path) => audit.filter((item) => item.path === path).map((item) => item.rule).sort().join(",");
+check("audit flags a repeated title and description per language", rules("/copy") === "description-duplicate,title-duplicate", rules("/copy"));
+check("audit flags a missing title and description as errors", rules("/") === "description-missing,title-missing", rules("/"));
+check("audit skips noindex pages", rules("/hidden") === "", rules("/hidden"));
+check("audit warns on long titles and descriptions", rules("/long") === "description-long,title-long", rules("/long"));
+
+const article = seo.articleSchema({
+    author: "Ada",
+    datePublished: "2026-01-02",
+    headline: "Release",
+    publisher: { logo: "https://example.com/logo.png", name: "Example" },
+    type: "BlogPosting",
+    url: "https://example.com/blog/release",
+});
+check("article schema typed", article["@type"] === "BlogPosting" && article.author.name === "Ada");
+check("article publisher logo is an ImageObject", article.publisher.logo["@type"] === "ImageObject");
+const faq = seo.faqSchema([{ answer: "Yes.", question: "Open?" }]);
+check("faq schema lists questions", faq.mainEntity[0].acceptedAnswer.text === "Yes.");
 
 if (failures.length) {
   for (const failure of failures) log.error("verify.seo", `FAIL ${failure}`);

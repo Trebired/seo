@@ -134,6 +134,29 @@ type SeoShellMeta = {
   title: string;
 };
 
+type SeoAuditLimits = {
+  descriptionMax?: number;
+  descriptionMin?: number;
+  titleMax?: number;
+  titleMin?: number;
+};
+
+type SeoAuditPage = {
+  description: string;
+  lang: string;
+  path: string;
+  robots?: SeoRobots;
+  title: string;
+};
+
+type SeoAuditIssue = {
+  lang: string;
+  level: "error" | "warning";
+  message: string;
+  path: string;
+  rule: string;
+};
+
 type SeoSitemapEntry = SeoSitemapEntryConfig& {
   lastModified?: Date | string;
   path: string;
@@ -141,6 +164,9 @@ type SeoSitemapEntry = SeoSitemapEntryConfig& {
 
 export type {
   NormalizedSeoConfig,
+  SeoAuditIssue,
+  SeoAuditLimits,
+  SeoAuditPage,
   NormalizeSeoConfigOptions,
   SeoChangeFrequency,
   SeoConfig,
