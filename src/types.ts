@@ -21,6 +21,7 @@ type SeoSite = {
   defaultLocale: string;
   locales?: readonly string[];
   name: string;
+  ogLocales?: Readonly<Record<string, string>>;
   url: string;
 };
 

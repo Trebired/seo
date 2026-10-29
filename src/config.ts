@@ -63,6 +63,7 @@ function normalizeConfig(
       defaultLocale: toString(config.site.defaultLocale),
       locales: normalizeLocales(config),
       name: toString(config.site.name),
+      ogLocales: { ...config.site.ogLocales },
       url: normalizeOrigin(config.site.url),
     },
     sitemap: { ...config.sitemap },

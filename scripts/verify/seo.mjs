@@ -48,7 +48,14 @@ function metaValue(descriptor, key) {
 check("og:title present", metaValue(home, "og:title") === "Home | Example");
 check("og:url is canonical", metaValue(home, "og:url") === "https://example.com/");
 check("og:site_name present", metaValue(home, "og:site_name") === "Example");
-check("og:locale present", metaValue(home, "og:locale") === "en");
+check("og:locale takes its usual territory", metaValue(home, "og:locale") === "en_US", metaValue(home, "og:locale"));
+check("og:locale:alternate takes its usual territory", metaValue(home, "og:locale:alternate") === "cs_CZ", metaValue(home, "og:locale:alternate"));
+
+const mapped = seo.buildRouteSeo(
+  seo.defineConfig({ ...config, site: { ...config.site, ogLocales: { en: "en_GB" } } }),
+  { locale: "en", path: "/", title: "Home" },
+);
+check("og:locale follows site.ogLocales", metaValue(mapped, "og:locale") === "en_GB", metaValue(mapped, "og:locale"));
 check("twitter:card defaults", metaValue(home, "twitter:card") === "summary_large_image");
 check("robots defaults to index", metaValue(home, "robots") === "index,follow");
 check(

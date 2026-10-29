@@ -113,6 +113,8 @@ export default defineConfig({
 });
 ```
 
+`site.ogLocales` maps a locale code to the Open Graph locale written to `og:locale` and `og:locale:alternate`, which Open Graph wants as `language_TERRITORY`: `{ cs: "cs_CZ", en: "en_GB" }`. A locale it does not name keeps its region if the code has one (`en-GB` becomes `en_GB`) and otherwise takes the language's usual territory (`cs` becomes `cs_CZ`, `en` becomes `en_US`).
+
 `site.name`, `site.url`, and `site.defaultLocale` are required. `normalizeConfig()` throws when one is missing, at build time rather than in a crawler's index.
 
 `forVersion` is required and is checked against the installed package version through `resolveForVersion()` from `@trebired/utils`. A config written for an older minor line fails the build rather than applying stale defaults. Its position among the config keys does not matter; the check is a property lookup, not an ordering rule. Pass `configPath` to `normalizeConfig()` to name the file in the failure message, and `requireForVersion: false` to allow an absent value.

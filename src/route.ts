@@ -80,6 +80,31 @@ function twitterMetas(config: NormalizedSeoConfig, title: string, description: s
   return metas;
 }
 
+const OPEN_GRAPH_REGIONS: Readonly<Record<string, string>> = {
+  cs: "CZ",
+  da: "DK",
+  de: "DE",
+  en: "US",
+  es: "ES",
+  fr: "FR",
+  hu: "HU",
+  it: "IT",
+  nl: "NL",
+  pl: "PL",
+  pt: "PT",
+  sk: "SK",
+  sv: "SE",
+  uk: "UA",
+};
+
+function openGraphLocale(config: NormalizedSeoConfig, locale: string): string {
+  const declared = config.site.ogLocales[locale];
+  if (declared) return declared;
+  const [language = "", region = ""] = locale.split(/[-_]/u);
+  const territory = region || OPEN_GRAPH_REGIONS[language.toLowerCase()] || "";
+  return territory ? `${language.toLowerCase()}_${territory.toUpperCase()}` : locale;
+}
+
 function openGraphMetas(
   config: NormalizedSeoConfig,
   input: { canonical: string; description: string; locale: string; title: string; type: string },
@@ -89,11 +114,11 @@ function openGraphMetas(
     { content: input.title, property: "og:title" },
     { content: input.canonical, property: "og:url" },
     { content: config.site.name, property: "og:site_name" },
-    { content: input.locale, property: "og:locale" },
+    { content: openGraphLocale(config, input.locale), property: "og:locale" },
   ];
   if (input.description) metas.push({ content: input.description, property: "og:description" });
   for (const locale of config.site.locales) {
-    if (locale !== input.locale) metas.push({ content: locale, property: "og:locale:alternate" });
+    if (locale !== input.locale) metas.push({ content: openGraphLocale(config, locale), property: "og:locale:alternate" });
   }
   return metas;
 }
