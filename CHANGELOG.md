@@ -4,6 +4,10 @@ All notable changes to `@trebired/seo` will be documented here.
 
 This project follows semantic versioning once published.
 
+## 0.7.0
+
+- Fixed `og:locale` and `og:locale:alternate` carrying the bare locale code (`cs`, `en`). Open Graph reads them as `language_TERRITORY`, and a crawler that finds `cs` falls back to `en_US`. Added `site.ogLocales`, a map from locale code to its Open Graph locale; a code it does not name keeps its own region (`en-GB` becomes `en_GB`) or takes its language's usual territory (`cs` becomes `cs_CZ`).
+
 ## 0.6.0
 
 - Changed the sitemap to list every language of a route as its own `<url>`. It listed only the default locale's URL with the others as alternates, so the translated URLs were never submitted themselves. Each entry now carries the full set of alternates and `x-default`.
