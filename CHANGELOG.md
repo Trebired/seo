@@ -4,6 +4,11 @@ All notable changes to `@trebired/seo` will be documented here.
 
 This project follows semantic versioning once published.
 
+## 0.7.1
+
+- Raised the dependency ranges to the current releases: `@trebired/utils` to `^0.9.7`.
+- Moved the repository's own Code Discipline config to `@trebired/code-discipline` 8 and the named preset `@trebired/configs/code-discipline/preset_01` from `@trebired/configs` 0.6.0.
+
 ## 0.7.0
 
 - Fixed `og:locale` and `og:locale:alternate` carrying the bare locale code (`cs`, `en`). Open Graph reads them as `language_TERRITORY`, and a crawler that finds `cs` falls back to `en_US`. Added `site.ogLocales`, a map from locale code to its Open Graph locale; a code it does not name keeps its own region (`en-GB` becomes `en_GB`) or takes its language's usual territory (`cs` becomes `cs_CZ`).
