@@ -55,6 +55,7 @@ const mapped = seo.buildRouteSeo(
   seo.defineConfig({ ...config, site: { ...config.site, ogLocales: { en: "en_GB" } } }),
   { locale: "en", path: "/", title: "Home" },
 );
+
 check("og:locale follows site.ogLocales", metaValue(mapped, "og:locale") === "en_GB", metaValue(mapped, "og:locale"));
 check("twitter:card defaults", metaValue(home, "twitter:card") === "summary_large_image");
 check("robots defaults to index", metaValue(home, "robots") === "index,follow");
@@ -65,6 +66,7 @@ check(
 );
 
 const alternates = home.links.filter((link) => link.rel === "alternate");
+
 check("hreflang alternates emitted", alternates.length === 3, String(alternates.length));
 check(
   "x-default alternate present",
@@ -80,6 +82,7 @@ const noindex = seo.buildRouteSeo(config, {
     robots: { follow: false, index: false },
     title: "Private",
 });
+
 check("robots noindex honoured", metaValue(noindex, "robots") === "noindex,nofollow");
 
 const singleLocale = seo.defineConfig({
@@ -87,6 +90,7 @@ const singleLocale = seo.defineConfig({
     site: { defaultLocale: "en", name: "Solo", url: "https://solo.test" },
 });
 const soloRoute = seo.buildRouteSeo(singleLocale, { path: "/x", title: "X" });
+
 check(
   "no alternates without locale strategy",
   soloRoute.links.filter((link) => link.rel === "alternate").length === 0,
@@ -94,6 +98,7 @@ check(
 check("bare title without template", soloRoute.title === "X", soloRoute.title);
 
 const shell = seo.toShellMeta(home);
+
 check("shell meta carries title", shell.title === home.title);
 check("shell meta carries lang", shell.lang === "en");
 check("shell meta has no extra keys", Object.keys(shell).length === 5);
@@ -101,10 +106,12 @@ check("shell meta has no extra keys", Object.keys(shell).length === 5);
 const script = seo.renderStructuredData([
     seo.webSiteSchema({ name: "Example", url: "https://example.com" }),
 ]);
+
 check("json-ld renders a script tag", script.startsWith('<script type="application/ld+json">'));
 check("json-ld carries context", script.includes('"@context":"https://schema.org"'));
 
 const injected = seo.serializeStructuredData([{ name: "</script><img onerror=x>" }]);
+
 check("json-ld escapes closing script", !injected.includes("</script>"), injected);
 
 const sitemap = seo.buildSitemap(config, [
@@ -112,6 +119,7 @@ const sitemap = seo.buildSitemap(config, [
     { lastModified: "2026-01-02T03:04:05.000Z", path: "/about" },
     { path: "/skip" },
 ]);
+
 check("sitemap declares urlset", sitemap.includes("<urlset"));
 check("sitemap contains home loc", sitemap.includes("<loc>https://example.com/</loc>"));
 check("sitemap emits lastmod", sitemap.includes("<lastmod>2026-01-02</lastmod>"));
@@ -124,17 +132,21 @@ const excluded = seo.buildSitemap(
   { ...config, sitemap: { exclude: ["/skip"] } },
   [{ path: "/" }, { path: "/skip" }],
 );
+
 check("sitemap exclude honoured", !excluded.includes("/skip"));
 
 const robotsTxt = seo.buildRobotsTxt(seo.normalizeConfig(config));
+
 check("robots.txt has user-agent", robotsTxt.startsWith("User-agent: *"));
 check("robots.txt links sitemap", robotsTxt.includes("Sitemap: https://example.com/sitemap.xml"));
 
 const headers = seo.seoHeaders(home);
+
 check("X-Robots-Tag header built", headers["X-Robots-Tag"] === "index,follow");
 check("canonical Link header built", headers.Link.includes("rel=\"canonical\""));
 
 const redirect = seo.canonicalRedirect(config, "https://example.com/about/");
+
 check("trailing slash redirects", redirect?.location === "https://example.com/about", String(redirect?.location));
 check("canonical url does not redirect", seo.canonicalRedirect(config, "https://example.com/about") === null);
 
@@ -142,6 +154,7 @@ const shellChrome = seo.mergeShellMeta(shell, {
     links: [{ href: "/favicon.ico", rel: "icon" }],
     metas: [{ content: "#ffffff", name: "theme-color" }],
 });
+
 check("merged chrome keeps seo links", shellChrome.links.length === shell.links.length + 1);
 check("merged chrome appends metas", shellChrome.metas.length === shell.metas.length + 1);
 check("merged chrome keeps title", shellChrome.title === shell.title);
@@ -156,17 +169,21 @@ function throws(fn) {
 }
 
 const stale = throws(() => seo.normalizeConfig({ ...config, forVersion: "0.1.0" }));
+
 check("stale forVersion rejected", stale.includes("targets 0.1.0"), stale);
 
 const missing = throws(() => seo.normalizeConfig({ ...config, forVersion: "" }));
+
 check("missing forVersion rejected", missing.includes("missing forVersion"), missing);
 
 const named = throws(() =>
   seo.normalizeConfig({ ...config, forVersion: "" }, { configPath: ".trebired/seo/config.ts" }));
+
 check("configPath named in error", named.includes(".trebired/seo/config.ts"), named);
 
 const relaxed = throws(() =>
   seo.normalizeConfig({ ...config, forVersion: "" }, { requireForVersion: false }));
+
 check("requireForVersion false allows empty", relaxed === "", relaxed);
 
 const outOfOrder = throws(() =>
@@ -175,6 +192,7 @@ const outOfOrder = throws(() =>
       forVersion: version,
       site: { defaultLocale: "en", name: "Order", url: "https://order.test" },
     }, { configPath: ".trebired/seo/config.ts" }));
+
 check("forVersion must come first", outOfOrder.includes("must declare forVersion first"), outOfOrder);
 
 const builder = seo.createSeoBuilder(config, {
@@ -185,6 +203,7 @@ const builder = seo.createSeoBuilder(config, {
     configPath: ".trebired/seo/config.ts",
 });
 const built = builder.shellMeta({ locale: "en", path: "/", title: "Home" });
+
 check("builder shellMeta titles", built.title === "Home | Example", built.title);
 check("builder shellMeta merges chrome links", built.links.some((l) => l.href === "/favicon.ico"));
 check("builder shellMeta merges chrome metas", built.metas.some((m) => m.name === "theme-color"));
@@ -199,6 +218,7 @@ check(
 check("builder descriptor canonical", builder.descriptor({ path: "/" }).canonical === "https://example.com/");
 
 const badBuilder = throws(() => seo.createSeoBuilder({ ...config, forVersion: "0.1.0" }));
+
 check("builder validates forVersion once", badBuilder.includes("targets 0.1.0"), badBuilder);
 
 const audit = seo.auditSeo([
@@ -209,6 +229,7 @@ const audit = seo.auditSeo([
     { description: "B".repeat(200), lang: "cs", path: "/long", title: "C".repeat(70) },
 ]);
 const rules = (path) => audit.filter((item) => item.path === path).map((item) => item.rule).sort().join(",");
+
 check("audit flags a repeated title and description per language", rules("/copy") === "description-duplicate,title-duplicate", rules("/copy"));
 check("audit flags a missing title and description as errors", rules("/") === "description-missing,title-missing", rules("/"));
 check("audit skips noindex pages", rules("/hidden") === "", rules("/hidden"));
@@ -222,9 +243,12 @@ const article = seo.articleSchema({
     type: "BlogPosting",
     url: "https://example.com/blog/release",
 });
+
 check("article schema typed", article["@type"] === "BlogPosting" && article.author.name === "Ada");
 check("article publisher logo is an ImageObject", article.publisher.logo["@type"] === "ImageObject");
+
 const faq = seo.faqSchema([{ answer: "Yes.", question: "Open?" }]);
+
 check("faq schema lists questions", faq.mainEntity[0].acceptedAnswer.text === "Yes.");
 
 if (failures.length) {
